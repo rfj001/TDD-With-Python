@@ -1,8 +1,8 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
 
-class NewVisitorTest(unittest.TestCase): # Tests are organized into classes inherited from unittest.TestCase
+class NewVisitorTest(LiveServerTestCase):
     
     def setUp(self): # setUp and tearDown are run before and after each test
         self.browser = webdriver.Firefox()
@@ -21,7 +21,7 @@ class NewVisitorTest(unittest.TestCase): # Tests are organized into classes inhe
     def test_can_start_a_list_and_retrieve_it_later(self): # Any method whose name starts with test is a test method, and is run by the test runner. Descriptive names are good, too.
         # Edith has heard about a cool new online to-do app. She goes to
         # check out its homepage
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         
         # She notices the page title and header mention to-do lists
         # Asserts that the text 'To-Do' is found within self.browser.title. We have other test assertions as well, like assertEqual, assertTrue, etc.
@@ -56,6 +56,7 @@ class NewVisitorTest(unittest.TestCase): # Tests are organized into classes inhe
         self.check_for_row_in_list_table('1: Buy peacock feathers')
         self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
         
+        self.fail("Finish the test!")
 
         # Edith wonders whether the site will remember her list. Then she sees that
         # the site has generated a unique URL for her -- there is some explanatory
@@ -64,8 +65,3 @@ class NewVisitorTest(unittest.TestCase): # Tests are organized into classes inhe
         # She visits that URL - her to-do list is still there.
 
         # Satisfied, she goes back to sleep.
-
-        browser.quit()
-        
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
