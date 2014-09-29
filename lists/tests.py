@@ -23,9 +23,8 @@ class HomePageTest(TestCase):
         response = home_page(request)
         # Assert that the content of the response has certain
         # properties
-        # Note: response.content is raw bytes, not Python string
-        # so we need to use b'' syntax to compare
-        self.assertTrue(response.content.startswith(b'<html>'))
+        expected_html = render_to_string('home.html')
+        self.assertEqual(response.content.decode(), expected_html)
         # Since we specify this criteria in our functional test, we should
         # check it here in our view's unit test
         # Unit test is driven by the functional test

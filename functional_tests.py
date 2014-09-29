@@ -17,7 +17,8 @@ class NewVisitorTest(unittest.TestCase): # Tests are organized into classes inhe
         self.browser.get('http://localhost:8000')
         
         # She notices the page title and header mention to-do lists
-        self.assertIn('To-Do', self.browser.title) # Asserts that the text 'To-Do' is found within self.browser.title. We have other test assertions as well, like assertEqual, assertTrue, etc.
+        # Asserts that the text 'To-Do' is found within self.browser.title. We have other test assertions as well, like assertEqual, assertTrue, etc.
+        self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element_by_id('id_new_item')
 
         # She is invited to enter a to-do item straight away
