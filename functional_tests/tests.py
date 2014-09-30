@@ -5,6 +5,8 @@ from selenium.webdriver.common.keys import Keys
 
 class NewVisitorTest(StaticLiveServerTestCase):
     
+    # Class method similar to setUp, but only executed once, rather
+    # than before each test method
     @classmethod
     def setUpClass(cls):
         for arg in sys.argv:
@@ -17,6 +19,11 @@ class NewVisitorTest(StaticLiveServerTestCase):
                 return
         super().setUpClass()
         cls.server_url = cls.live_server_url
+    
+    @classmethod
+    def tearDownClass(cls):
+        if cls.server_url == cls.live_server_url:
+            super().tearDownClass()
     
     def setUp(self): # setUp and tearDown are run before and after each test
         self.browser = webdriver.Firefox()
