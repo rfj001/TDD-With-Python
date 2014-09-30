@@ -25,7 +25,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # Needed when DEBUG=False
-ALLOWED_HOSTS = ['staging.robertfjohnson.com']
+ALLOWED_HOSTS = ('staging.robertfjohnson.com',)
 
 
 # Application definition
