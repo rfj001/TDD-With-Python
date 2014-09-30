@@ -75,9 +75,9 @@ def _update_virtualenv(source_folder):
     ))
     
 def _update_static_files(source_folder):
-    # Note use of virtualenv binaries folder to run Django manage.py command
-    run('cd %s && ../virtualenv/bin/python3 manage.py collectstatic \
-    --noinput' % ( source_folder, ))
+    run('cd %s && ../virtualenv/bin/python3 manage.py collectstatic --noinput' % (
+        source_folder,
+    ))
     
 def _update_database(source_folder):
     run('cd %s && ../virtualenv/bin/python3 manage.py migrate --noinput' % (
