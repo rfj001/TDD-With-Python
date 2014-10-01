@@ -20,9 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'y&(3!hum-%!mjh5xpb41z-1t9n*dz4$a!b5+v-(xl$0vd)uwvq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = True
 
 # Needed when DEBUG=False
 ALLOWED_HOSTS = ('staging.robertfjohnson.com',)
