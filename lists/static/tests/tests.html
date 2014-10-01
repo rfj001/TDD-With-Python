@@ -9,7 +9,7 @@
 <body>
     <div id="qunit"></div>
     <div id="qunit-fixture">
-		<form id="task_input">
+		<form id="id_text">
 			<input name="text" />
 			<div class="has-error">Error text</div>
 		</form>
@@ -22,14 +22,14 @@
 /*global $, test, equal */
 
 	test("errors should be hidden on keypress", function() {
-		$('#task_input').trigger('keypress');
+		$('id_text').trigger('keypress');
 		equal($('.has-error').is(':visible'), false);
 	});
 	test("errors not be hidden unless there is a keypress", function () {
 	    equal($('.has-error').is(':visible'), true);
 	});
 	test("errors should be hidden on click", function() {
-		$('#task_input').trigger('click');
+		$('id_text').trigger('click');
 		equal($('.has-error').is(':visible'), false);
 	});
 
