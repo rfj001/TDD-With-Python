@@ -22,7 +22,7 @@ SECRET_KEY = 'y&(3!hum-%!mjh5xpb41z-1t9n*dz4$a!b5+v-(xl$0vd)uwvq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 # Needed when DEBUG=False
 ALLOWED_HOSTS = ('staging.robertfjohnson.com',)
