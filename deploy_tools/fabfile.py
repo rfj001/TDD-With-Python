@@ -45,7 +45,7 @@ def _update_settings(source_folder, site_name):
     # sed command does a string substitution in a file
     # Changes DEBUG in settings from True to False
     sed(settings_path, "DEBUG = True", "DEBUG = False")
-    sed(settings_path, 'DOMAIN = "localhost"', 'DOMAIN = %s' % (site_name,))
+    sed(settings_path, 'DOMAIN = "localhost"', 'DOMAIN = "%s"' % (site_name,))
     secret_key_file = source_folder + '/superlists/secret_key.py'
     # Django uses SECRET_KEY for some of its crypto-cookies and CSRF protection
     # Good practice to make sure the secret key on the server is different from
