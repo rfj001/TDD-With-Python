@@ -1,4 +1,3 @@
-from selenium.webdriver.support.ui import WebDriverWait
 from .base import FunctionalTest
 import time
 
@@ -16,16 +15,6 @@ class LoginTest(FunctionalTest):
             retries -= 1
             time.sleep(0.5)
         self.fail('could not find window')
-        
-    def wait_for_element_with_id(self, element_id):
-        ## implicitly_wait is unreliable, especially when JavaScript is
-        ## involved. Better to use this wait-for pattern
-        WebDriverWait(self.browser, timeout=30).until(
-            lambda b: b.find_element_by_id(element_id),
-            'Could not find element with id {}. Page text was {}'.format(
-                element_id, self.browser.find_element_by_tag_name('body').text
-            )
-        )
         
     def test_login_with_persona(self):
         # Edith goes to the awesome superlists site
