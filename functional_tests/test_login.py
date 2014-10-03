@@ -2,6 +2,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from .base import FunctionalTest
 import time
 
+TEST_EMAIL = 'edith@mockmyid.com'
+
 class LoginTest(FunctionalTest):
     
     def switch_to_new_window(self, text_in_title):
@@ -25,16 +27,6 @@ class LoginTest(FunctionalTest):
             )
         )
         
-    def wait_to_be_logged_in(self):
-        self.wait_for_element_with_id('id_logout')
-        navbar = self.browser.find_element_by_css_selector('.navbar')
-        self.assertIn('edith@mockmyid.com', navbar.text)
-
-    def wait_to_be_logged_out(self):
-        self.wait_for_element_with_id('id_login')
-        navbar = self.browser.find_element_by_css_selector('.navbar')
-        self.assertNotIn('edith@mockmyid.com', navbar.text)
-
     def test_login_with_persona(self):
         # Edith goes to the awesome superlists site
         # and notices a "Sign in" link for the first time.
@@ -49,8 +41,8 @@ class LoginTest(FunctionalTest):
         ## Found the id to look up by navigating to the site and using the 
         ## debug toolbar
         self.browser.find_element_by_id(
-            'authentication_email'  #2
-        ).send_keys('edith@mockmyid.com') #3
+            'authentication_email'
+        ).send_keys(TEST_EMAIL)
         self.browser.find_element_by_tag_name('button').click()
 
         # The Persona window closes
@@ -72,17 +64,17 @@ class LoginTest(FunctionalTest):
         self.switch_to_new_window('To-Do')
 
         # She can see that she is logged in
-        self.wait_to_be_logged_in()
+        self.wait_to_be_logged_in(email=TEST_EMAIL)
 
         # Refreshing the page, she sees it's a real session login,
         # not just a one-off for that page
         self.browser.refresh()
-        self.wait_to_be_logged_in()
+        self.wait_to_be_logged_in(email=TEST_EMAIL)
 
         # Terrified of this new feature, she reflexively clicks "logout"
         self.browser.find_element_by_id('id_logout').click()
-        self.wait_to_be_logged_out()
+        self.wait_to_be_logged_out(email=TEST_EMAIL)
 
         # The "logged out" status also persists after a refresh
         self.browser.refresh()
-        self.wait_to_be_logged_out()
+        self.wait_to_be_logged_out(email=TEST_EMAIL)
