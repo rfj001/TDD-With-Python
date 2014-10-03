@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lists',
+    'accounts',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -53,6 +54,11 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'superlists.urls'
 
 WSGI_APPLICATION = 'superlists.wsgi.application'
+
+AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = (
+    'accounts.authentication.PersonaAuthenticationBackend'
+)
 
 
 # Database
