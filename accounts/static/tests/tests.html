@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Javascript tests</title>
+    <link rel="stylesheet" href="../../../superlists/static/tests/qunit.css">
+</head>
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+		<a id="id_login">Sign in</a>
+	</div>
+	
+	<script src="http://code.jquery.com/jquery.min.js"></script>
+	    <script src="../../../superlists/static/tests/qunit.js"></script>
+		<script src="../../../superlists/static/tests/sinon.js"></script>
+	    <script src="../accounts.js"></script>
+	    <script>
+	/*global $, test, equal, sinon, Superlists */
+
+	test("initialize binds sign in button to navigator.id.request", function () {
+	    var requestWasCalled = false;
+		// Here we define our mockRequestFunction, which essentially just
+		// checks to see if the function was called
+	    var mockRequestFunction = function () { requestWasCalled = true; };
+		// Our mock navigator, defined as a JavaScript object that contains
+		// our mockRequest function
+	    var mockNavigator = {
+	        id: {
+	            request: mockRequestFunction,
+				watch: function () {}
+	        }
+	    };
+
+		// Before triggering click event, call initialize function, passing
+		// in a fake navigator object called mockNavigator
+	    Superlists.Accounts.initialize(mockNavigator);
+		equal(requestWasCalled, false, 'check request not called before click');
+	    $('#id_login').trigger('click'); //5
+
+		// Check that the request function in navigator.id.request was called
+	    equal(requestWasCalled, true, 'check request called after click');
+	});
+	
+	// Pull out the following variables to a higher scope so they'll be
+	// available to all of the tests in the file
+	var user, token, urls, mockNavigator, requests, xhr;
+	module("navigator.id.watch.tests", {
+		// Initialize the above variables inside setup function, which is run
+		// before each test
+		setup: function () {
+			user = 'current user';
+			token = 'csrf token';
+			urls = { login: 'login url', logout: 'logout url' };
+			mockNavigator = {
+		        id: {
+		            watch: sinon.mock()
+		        }
+		    };
+			// Use sinon's useFakeHttpRequest() method, which patches out 
+			// the browser's Ajax capabilities
+			xhr = sinon.useFakeXMLHttpRequest();
+			requests = [];
+			xhr.onCreate = function (request) { requests.push(request); }
+		},
+		teardown: function () {
+			// Cleanup by resetting the mock for the watch function and
+			// putting the JavaScript XMLHttpRequest back the way we found it
+			mockNavigator.id.watch.reset();
+			xhr.restore();
+		}
+	});
+	
+	test("initialize calls navigator.id.watch", function () {
+	    Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+	    equal(
+	        mockNavigator.id.watch.calledOnce, //2
+	        true,
+	        'check watch function called'
+	    );
+	});
+	
+	test("watch sees current user", function () {
+	    Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+	    var watchCallArgs = mockNavigator.id.watch.firstCall.args[0];
+	    equal(watchCallArgs.loggedInUser, user, 'check user');
+	});
+	
+	test("onlogin does ajax post to login url", function () {
+	    Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+		// The mock we set on the mock navigator's watch function lets us
+		// extract the callback function we set as "onlogin"
+	    var onloginCallback = mockNavigator.id.watch.firstCall.args[0].onlogin;
+		// We can then actually call that function in order to test it.
+	    onloginCallback();
+		// Sinon's fakeXMLHttpRequest server will catch any Ajax requests we
+		// make, and put them into the requests array.
+	    equal(requests.length, 1, 'check ajax request');
+	    equal(requests[0].method, 'POST');
+	    equal(requests[0].url, urls.login, 'check url');
+	});
+
+	test("onlogin sends assertion with csrf token", function () {
+	    Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+	    var onloginCallback = mockNavigator.id.watch.firstCall.args[0].onlogin;
+	    var assertion = 'browser-id assertion';
+	    onloginCallback(assertion);
+		// The actual POST parameters are help in .requestBody, but they are 
+		// URL-encoded. jQuery's $.param function does URL-encoding
+	    equal(
+	        requests[0].requestBody,
+	        $.param({ assertion: assertion, csrfmiddlewaretoken: token }), //4
+	        'check POST data'
+	    );
+	});
+	
+	test("onlogout is just a placeholder", function () {
+		Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+		var onlogoutCallback = mockNavigator.id.watch.firstCall.args[0].onlogout;
+		equal(typeof onlogoutCallback, "function", "onlogout should be a function");
+	})
+	
+	test("onlogin post failure should do navigator.id.logout ", function () {
+		// We put a mock on the navigator.id.logout function we're interested
+		// in
+	    mockNavigator.id.logout = sinon.mock();
+	    Superlists.Accounts.initialize(mockNavigator, user, token, urls);
+	    var onloginCallback = mockNavigator.id.watch.firstCall.args[0].onlogin;
+		// We use Sinon's fakeServer, which is an abstraction on top of the
+		// fakeXMLHttpRequest to simulate Ajax server responses
+	    var server = sinon.fakeServer.create();
+		// We set up our fake server to respond with a 403 "permission denied"
+		// response, to simulate what will happen for unauthorized users
+	    server.respondWith([403, {}, "permission denied"]);
+
+	    onloginCallback();
+	    equal(mockNavigator.id.logout.called, false, 'should not logout yet');
+		// We then explicitly tell the fake server to send that response
+		// Only then should we see the logout call
+	    server.respond();
+	    equal(mockNavigator.id.logout.called, true, 'should call logout')
+	});
+
+	    </script>
+
+</body>
+</html>
