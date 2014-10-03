@@ -24,8 +24,11 @@ DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
+# This setting is changed by the deploy script
+DOMAIN = "localhost"
+
 # Needed when DEBUG=False
-ALLOWED_HOSTS = ('staging.robertfjohnson.com',)
+ALLOWED_HOSTS = [DOMAIN]
 
 ## Tells Django to log error messages to the console.
 LOGGING = {
@@ -57,6 +60,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'lists',
     'accounts',
+    'functional_tests',
 )
 
 MIDDLEWARE_CLASSES = (

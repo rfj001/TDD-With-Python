@@ -1,5 +1,5 @@
 from fabric.contrib.files import append, exists, sed
-from fabric.api import env, local, run
+from fabric.api import env, run, local
 import random
 
 REPO_URL = 'https://github.com/rfj001/TDD-With-Python.git'
@@ -45,11 +45,7 @@ def _update_settings(source_folder, site_name):
     # sed command does a string substitution in a file
     # Changes DEBUG in settings from True to False
     sed(settings_path, "DEBUG = True", "DEBUG = False")
-    # Adjust ALLOWED_HOSTS, using a regex to match the right line
-    sed(settings_path,
-        'ALLOWED_HOSTS =.+$',
-        'ALLOWED_HOSTS = ["%s"]' % (site_name,)
-    )
+    sed(settings_path, 'DOMAIN = "localhost"', 'DOMAIN = %s' % (site_name,))
     secret_key_file = source_folder + '/superlists/secret_key.py'
     # Django uses SECRET_KEY for some of its crypto-cookies and CSRF protection
     # Good practice to make sure the secret key on the server is different from
@@ -83,3 +79,24 @@ def _update_database(source_folder):
     run('cd %s && ../virtualenv/bin/python3 manage.py migrate --noinput' % (
         source_folder,
     ))
+    
+def _get_base_folder(host):
+    return '~/sites/' + host
+
+def _get_manage_dot_py(host):
+    return '{path}/virtualenv/bin/python {path}/source/manage.py'.format(
+        path=_get_base_folder(host)
+    )
+
+def reset_database():
+    run('{manage_py} flush --noinput'.format(
+        manage_py=_get_manage_dot_py(env.host)
+    ))
+
+
+def create_session_on_server(email):
+    session_key = run('{manage_py} create_session {email}'.format(
+        manage_py=_get_manage_dot_py(env.host),
+        email=email,
+    ))
+    print(session_key)
