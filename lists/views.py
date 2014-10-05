@@ -30,3 +30,6 @@ def new_list(request):
         # If invalid, we pass the form down to the template, instead of
         # hardcoded error string
         return render(request, 'home.html', {"form": form})
+        
+def my_lists(request, email):
+    return render(request, 'my_lists.html')
