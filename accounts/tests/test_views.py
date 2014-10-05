@@ -53,4 +53,3 @@ class LoginViewTest(TestCase):
         self.client.post('/accounts/login', {'assertion': 'a'})
         # We check that the SESSION_KEY does not appear in their session
         self.assertNotIn(SESSION_KEY, self.client.session)
-    
